@@ -47,6 +47,22 @@ Any version of Python would work. I assume you also have python, if not, please 
 Simply do `pip install selenium` in your terminal, wait for everything to be done. You are good to go.
 
 ## Usage:
+### Choosing the Correct Branch:
+
+Depending on your operating system, we have tailored the code to offer the best compatibility. Make sure you're on the right branch for your OS:
+
+- **macOS Users**: 
+```bash
+git checkout macOS
+````
+- **Ubuntu 22.04 Users**
+```bash
+git checkout ubuntu-22.04
+````
+- **Windows(10/11) Users**:
+```bash
+git checkout win11
+````
 
 ### Command Line Arguments
 
