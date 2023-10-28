@@ -55,7 +55,7 @@ search_field.send_keys(Keys.ENTER)  # Press enter on the keyboard
 
 while True:
     try:
-        sleep_duration = random.uniform(7, 10)  # Random sleep time between 7 to 10 seconds
+        sleep_duration = random.uniform(6, 8)  # Random sleep time between 7 to 10 seconds
         time.sleep(sleep_duration)
         course_element = driver.find_element(By.XPATH, f"//*[contains(text(), '{args.instructor_name}')]")
 
@@ -73,7 +73,7 @@ while True:
 
     except NoSuchElementException:  # Element not found
         driver.refresh()
-        refresh_duration = random.uniform(5, 8)  # Random refresh time between 5 to 8 seconds
+        refresh_duration = random.uniform(0, 1)  # Random refresh time between 5 to 8 seconds
         time.sleep(refresh_duration)
         continue  # Skip the rest of the loop and start from the beginning
     
