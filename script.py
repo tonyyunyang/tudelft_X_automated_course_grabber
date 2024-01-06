@@ -18,8 +18,9 @@ parser.add_argument("instructor_name", help="Name of the instructor to search fo
 args = parser.parse_args()
 
 
-serv = Service('/snap/bin/firefox.geckodriver')
-driver = webdriver.Firefox(service=serv)
+# serv = Service('/snap/bin/firefox.geckodriver')
+# driver = webdriver.Firefox(service=serv)
+driver = webdriver.Firefox()
 
 # driver.get('https://engine.surfconext.nl/authentication/idp/single-sign-on/key:20230503?SAMLRequest=fVLLbtswEPwVgXfqQb8awnLgxghqIEVdW%2BmhN4ZaOUSlpcqlUufvS8mPuD34QpC7w5ndnZ3fH5o6egNHxmLOsjhlEaC2pcF9zp6LR%2F6J3S%2FmpJpatHLZ%2BVfcwu8OyEfhI5I8ZnLWOZRWkSGJqgGSXsvd8uuTFHEqW2e91bZm0ZIInA9SDxapa8DtwL0ZDc%2Fbp5y9et%2BSTBJtEUH7mDpXhTscfIx1Utu9wWSQS4hsYk2pcc%2BiVajFoPJD%2FWcKwACG%2FxhUqB7QGz2AE1O2CYU2a%2BBk9shD6Be8S5GKUTpJRyx6tE7D0HLOKlUTsGi9ytly%2B12MZ7O76o5neiz4uBRTrtJU8WpSaYBJJUrIApaogzWSV%2Bhz1tPyLOViVGSZFFOZzeLJbPqTRZvTdD4bPE791ihfjiCSX4piwzffdgWLfpzdCwB28koO6u7apNvE6uwMW9z0YZ5c8182Y6dtG%2Brqmzm8P9iubzljl%2FRpZ8CtV4s%2F8MKptS68eOUsesAyDitSdrrXj0uoK9%2Bf2jYfgv9yXIIn3Y%2FA9You%2FgI%3D&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=OQxYKmiPz%2F7L7HF8GGazPHfnUd5jYutrx4VJ%2F7mL3JWGl9O200sFoeIJmqGpc%2Fm82eWH1kvXFcuzixxgQRsSn%2Bvv0qNR40zZmMBb70h%2FL01QsFcNNzI0MIVOTN0gla3um0qFgNHNKy%2BevHNwBdbQuGG0hk%2FomgnrL%2BG0%2FaCK8RmlsbeWJTNuPgRfD4uAqZFpriI46vziJ%2FW05tXPKyjQm82jSPzApjkbjOzwSuaqhR481R5ts%2B3CPEkAETKfUwBmbONiikLhMg9XM6RivbJOe0WvfRrbyL%2FU1yMl49s9fwy3uhkRYLSElduXutsE8GRIZaEmeMxVzMZ1lXpgM5DEzg%3D%3D')
 driver.get('https://www.tudelft.nl/x/aanbod/x-abonnement')
