@@ -8,14 +8,66 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 import random
 import argparse
+import sys
+
+from datetime import datetime
+
+def valid_date(s):
+    try:
+        # Attempt to parse the input as a date
+        datetime.strptime(s, "%d-%m-%Y")
+        return s
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"Invalid date format: {s}. Please use the format dd-mm-yyyy.")
+
 
 # example to run: python3 your_script_name.py your_username your_password "Body Power" "Salil"
 parser = argparse.ArgumentParser(description="Automate booking process with Selenium.")
-parser.add_argument("username", help="Your username for login.")
-parser.add_argument("password", help="Your password for login.")
-parser.add_argument("course_name", help="Name of the course to search for.")
-parser.add_argument("instructor_name", help="Name of the instructor to search for.")
-args = parser.parse_args()
+subparsers = parser.add_subparsers(title='subcommands', dest='subcommand', help='Available subcommands', required=True)
+
+parser.add_argument("-u", "--username", type=str, required=True, help="Your username for login.")
+parser.add_argument("-p", "--password", type=str, required=True, help="Your password for login.")
+# parser.add_argument("course_name", help="Name of the course to search for.")
+# parser.add_argument("instructor_name", help="Name of the instructor to search for.")
+
+# Gym subcommand
+gym_parser = subparsers.add_parser('gym', help='Book a gym session')
+gym_parser.add_argument('date', type=lambda d: datetime.strptime(d, '%d-%m-%Y').strftime('%d-%m-%Y'), 
+                        help='Specify the date in the format DD-MM-YYYY')
+gym_parser.add_argument('time', help='Specify the time in 24-hour format HH')
+
+# Course subcommand
+course_parser = subparsers.add_parser('course', help='Book a course session for today')
+course_parser.add_argument('course_name', help='Specify the course name')
+course_parser.add_argument('instructor_name', help='Specify the instructor name')
+
+try:
+    args = parser.parse_args()
+except:
+    if (len(sys.argv) > 5 and sys.argv[5] == "gym"):
+        gym_parser.print_help()
+    elif (len(sys.argv) > 5 and sys.argv[5] == "course"):
+        course_parser.print_help()
+    else:
+        parser.print_help()
+    exit(1)
+
+# Check the subcommand for the search field
+to_search_field = ""
+if args.subcommand == 'gym':
+    to_search_field = "Fitness"
+    
+    # Check the date and convert to the format of the website
+    date = datetime.strptime(args.date, '%d-%m-%Y')
+    if date <= datetime.today() :
+        book_date = "Today"
+    else: 
+        # Convert to the format of the website: Su 10-1, Mo 11-1, Tu 12-1, We 13-1, Th 14-1, Fr 15-1, Sa 16-1
+        weekday_abbreviation = date.strftime("%a")[:2]
+        book_date = f"{weekday_abbreviation} {date.strftime('%d-%m').lstrip('0')}"
+elif args.subcommand == 'course':
+    to_search_field = args.course_name
+
 
 
 # serv = Service('/snap/bin/firefox.geckodriver')
@@ -50,20 +102,41 @@ wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#submit_button"))).clic
 wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "li.nav-item:nth-child(1) > a:nth-child(1) > div:nth-child(1) > div:nth-child(2)"))).click()
 
 search_field = wait.until(EC.presence_of_element_located((By.ID, 'tag-searchfield')))
-search_field.send_keys(args.course_name)
+
+# Search for the course or gym
+search_field.send_keys(to_search_field)
+
 time.sleep(2)
 search_field.send_keys(Keys.ENTER)  # Press enter on the keyboard
 
+
 while True:
     try:
+        if args.subcommand == 'gym':
+            if book_date != "Today":
+                # course_element = driver.find_element(By.XPATH, f"//*[contains(text(), '{args.date}')]")
+                date_button = wait.until(EC.presence_of_element_located
+                    ((By.XPATH, f"//a[@class='btn btn-soft-primary' and .//span[contains(text(), '{book_date}')]]")))
+                
+                # Check if clickable
+                if "enabled" not in date_button.get_attribute("class"):
+                    date_button.click()
+
+            course_element = wait.until(EC.presence_of_element_located
+                                       ((By.XPATH, f"//div[@class='bookable-slot-list' and .//*[contains(text(), '{args.time}')]]")))            
+        else: # Assume course
+            course_element = driver.find_element(By.XPATH, f"//*[contains(text(), '{args.instructor_name}')]")
         sleep_duration = random.uniform(6, 8)  # Random sleep time between 7 to 10 seconds
         time.sleep(sleep_duration)
-        course_element = driver.find_element(By.XPATH, f"//*[contains(text(), '{args.instructor_name}')]")
 
         # Check if the correct parent container of "Salil" does not have "disabled opacity-50" attributes
-        if "disabled opacity-50" not in course_element.find_element(By.XPATH, "./ancestor::div[6]").get_attribute("class"):
+        # if "disabled opacity-50" not in course_element.find_element(By.XPATH, "./ancestor::div[6]").get_attribute("class"):
+        if "disabled opacity-50" not in course_element.find_element(By.XPATH,  ".//button[contains(@data-test-id, 'bookable-slot')]").get_attribute("class"):
+            print("Found")
+
             # Locate the button inside the container of the "Salil" class and click it
-            course_button = course_element.find_element(By.XPATH, "./ancestor::div[6]//button[contains(@data-test-id, 'bookable-slot')]")
+            # course_button = course_element.find_element(By.XPATH, "./ancestor::div[6]//button[contains(@data-test-id, 'bookable-slot')]")
+            course_button = course_element.find_element(By.XPATH, ".//button[@class='btn btn-primary' and contains(@data-test-id, 'bookable-slot')]")
             course_button.click()
             time.sleep(5)
             # Find the "Book" button by its data-test-id attribute and click it
