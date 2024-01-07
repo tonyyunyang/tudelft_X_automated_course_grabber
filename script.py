@@ -31,7 +31,7 @@ parser.add_argument("-p", "--password", type=str, required=True, help="Your pass
 # parser.add_argument("instructor_name", help="Name of the instructor to search for.")
 
 # Gym subcommand
-gym_parser = subparsers.add_parser('gym', help='Book a gym session')
+gym_parser = subparsers.add_parser('gym', help='Book a gym session for a specific date and time')
 gym_parser.add_argument('date', type=lambda d: datetime.strptime(d, '%d-%m-%Y').strftime('%d-%m-%Y'), 
                         help='Specify the date in the format DD-MM-YYYY')
 gym_parser.add_argument('time', help='Specify the time in 24-hour format HH')
@@ -43,7 +43,7 @@ course_parser.add_argument('instructor_name', help='Specify the instructor name'
 
 try:
     args = parser.parse_args()
-except:
+except argparse.ArgumentError as e:
     if (len(sys.argv) > 5 and sys.argv[5] == "gym"):
         gym_parser.print_help()
     elif (len(sys.argv) > 5 and sys.argv[5] == "course"):
